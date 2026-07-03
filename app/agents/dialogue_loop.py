@@ -10,6 +10,15 @@ from dotenv import load_dotenv
 from app.schemas.dialogue import QuestionSchema, AnswerSchema, KnowledgePayloadSchema
 from scripts.database.update_vectors import search_similar_contents
 
+def clean_schema(d: Any) -> Any:
+    """遞迴移除 Pydantic JSON Schema 中的 additionalProperties 欄位，以相容 Gemini API 限制"""
+    if isinstance(d, dict):
+        d.pop("additionalProperties", None)
+        return {k: clean_schema(v) for k, v in d.items()}
+    elif isinstance(d, list):
+        return [clean_schema(x) for x in d]
+    return d
+
 # 載入 API 金鑰 (強制覆寫系統環境變數)
 load_dotenv(override=True)
 API_KEY = os.getenv("GEMINI_API_KEY")
@@ -140,7 +149,7 @@ def call_inquirer(subject: str, history: List[Dict[str, Any]]) -> QuestionSchema
             contents=prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
-                response_schema=QuestionSchema
+                response_schema=clean_schema(QuestionSchema.model_json_schema())
             )
         )
         return QuestionSchema.model_validate_json(response.text)
@@ -169,7 +178,7 @@ def call_responder(question: str, db_context: str) -> AnswerSchema:
             contents=prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
-                response_schema=AnswerSchema
+                response_schema=clean_schema(AnswerSchema.model_json_schema())
             )
         )
         return AnswerSchema.model_validate_json(response.text)
@@ -207,7 +216,7 @@ def call_summarizer(subject: str, history: List[Dict[str, Any]]) -> KnowledgePay
             contents=prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
-                response_schema=KnowledgePayloadSchema
+                response_schema=clean_schema(KnowledgePayloadSchema.model_json_schema())
             )
         )
         return KnowledgePayloadSchema.model_validate_json(response.text)
