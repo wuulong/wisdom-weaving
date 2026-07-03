@@ -16,7 +16,7 @@
     2.  **資料庫 schema 實作 (已完成)**：已撰寫腳本 [init_db.py](file:///Users/wuulong/github/bmad-pa/scripts/database/init_db.py) 並執行，成功在 `wisdom_weaving.db` 中建置所有 L0-L1-L2 表結構。
     3.  **離線向量模型降級與檢索 (已完成)**：已撰寫 [update_vectors.py](file:///Users/wuulong/github/bmad-pa/scripts/database/update_vectors.py)，實作了完全本地離線的中文 TF-IDF/Bigram 向量生成與 Cosine 餘弦相似度 RAG 檢索，完美防禦外部 API Key 被封鎖之異常。
     4.  **文本初始化與導入 (已完成)**：已撰寫 [bootstrap_doc.py](file:///Users/wuulong/github/bmad-pa/scripts/research/bootstrap_doc.py) 並執行，完成模擬文本的段落切片、實體註冊（韋小寶、雙兒等 5 位妻子）、mentions 標註與預設關係圖譜資料導入。
-*   **對應測試**：`[TCV-001]` 傳統 DB 關聯測試、`[TCV-002]` 向量相似度檢索測試。
+*   **對應測試**：`TCV-001` 傳統 DB 關聯測試、`TCV-002` 向量相似度檢索測試。
 
 ### Phase 2: 多代理人拓本與 JIT 對角迴圈 (MAS & Dialogue Loop) (已完成)
 *   **目標**：依循 `antigravity SDK` 的設計模式，開發 Inquirer, Responder, Summarizer 三個 Agent 並跑通對話演算法。
@@ -25,7 +25,7 @@
     2.  **Agent Persona 設定 (已完成)**：已在 `app/agents/prompts/` 建立 [inquirer_persona.md](file:///Users/wuulong/github/bmad-pa/events/wisdom-core/wisdom-weaving/app/agents/prompts/inquirer_persona.md)、[responder_persona.md](file:///Users/wuulong/github/bmad-pa/events/wisdom-core/wisdom-weaving/app/agents/prompts/responder_persona.md) 與 [summarizer_persona.md](file:///Users/wuulong/github/bmad-pa/events/wisdom-core/wisdom-weaving/app/agents/prompts/summarizer_persona.md) 系統 Prompts 模版。
     3.  **對話迴圈實作 (已完成)**：已在 [dialogue_loop.py](file:///Users/wuulong/github/bmad-pa/events/wisdom-core/wisdom-weaving/app/agents/dialogue_loop.py) 實作多代理人對角問答對抗迴圈。
     4.  **強韌 Mock 降級與聯網補強 (已完成)**：Responder 已原生整合 Gemini 的 Google Search Tool 進行實時聯網。同時實作了 API Key 受限時的 **MockLLM 本地降級機制**，當檢測到 API 被阻擋時自動切換至預定義的高品質問答資料庫，並動態替換專題主旨，保證離線狀態下流程 100% 跑通。
-*   **對應測試**：`[TCV-004]` 知識缺漏反思與聯網查詢測試。
+*   **對應測試**：`TCV-004` 知識缺漏反思與聯網查詢測試。
 
 ### Phase 3: 四維情感與關係空間映射 (4D Mapping & L2 Knowledge Atlas) (已完成)
 *   **目標**：實作歸納 Agent 的四維度情感特徵映射，並將專題知識卡片寫入 Layer 2。
@@ -33,7 +33,7 @@
     1.  **四維空間映射演算法 (已完成)**：已於 [summarizer_persona.md](file:///Users/wuulong/github/bmad-pa/events/wisdom-core/wisdom-weaving/app/agents/prompts/summarizer_persona.md) 中定義並在 [dialogue_loop.py](file:///Users/wuulong/github/bmad-pa/events/wisdom-core/wisdom-weaving/app/agents/dialogue_loop.py) 中跑通四維座標映射（V_geo, V_iso, V_loy, V_con）。
     2.  **知識中樞層寫入 (已完成)**：已實作 `save_to_knowledge_atlas`，成功將包含節點與關係邊的知識卡片 JSON 保存至 SQLite `knowledge_atlas` 表。
     3.  **JIT 按需回答與增量建置 (已完成)**：已實作 [jit_service.py](file:///Users/wuulong/github/bmad-pa/events/wisdom-core/wisdom-weaving/app/services/jit_service.py)。使用者查詢時，先在 L2 檢索；若缺失，則自動驅動對角問答對抗進行「增量厚化」與「按需建置」，建立新知識卡片並回傳。
-*   **對應測試**：`[TCV-003]` ER 關係圖譜 CTE 查詢測試。
+*   **對應測試**：`TCV-003` ER 關係圖譜 CTE 查詢測試。
 
 ### Phase 4: 版權隔離工具鏈與 CLI 開發 (Compliance Tools & CLI) (已完成)
 *   **目標**：開發合規釋出工具、還原重建工具與入口 CLI。
@@ -42,7 +42,7 @@
     2.  **L1 文本剝離工具 (已完成)**：已實作 [strip_l1_text.py](file:///Users/wuulong/github/bmad-pa/scripts/database/strip_l1_text.py)，一鍵抹除 contents 表的 raw_text 內容以防禦版權糾紛。
     3.  **L1 文本還原重建工具 (已完成)**：已實作 [restore_l1_text.py](file:///Users/wuulong/github/bmad-pa/scripts/database/restore_l1_text.py)，地端部署後指定本地文本，自動還原 raw_text 小說本文。
     4.  **入口 CLI 封裝 (已完成)**：已建立統一入口 [main.py](file:///Users/wuulong/github/bmad-pa/events/wisdom-core/wisdom-weaving/app/main.py)，提供 `init`, `query`, `strip`, `restore` 子指令，並在 [justfile](file:///Users/wuulong/github/bmad-pa/justfile) 配置了對應 we- 系列快捷命令。
-*   **對應測試**：`[TCV-005]` 模擬文本萃取測試、`[TCV-006]` L1 剝離與重建還原測試。
+*   **對應測試**：`TCV-005` 模擬文本萃取測試、`TCV-006` L1 剝離與重建還原測試。
 
 ### Phase 5: 整合測試與系統工程對合審計 (Testing & Audit) (已完成)
 *   **目標**：撰寫單元與整合測試，並通過 SE 一致性稽核。
