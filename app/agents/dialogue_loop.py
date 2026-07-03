@@ -9,8 +9,8 @@ from dotenv import load_dotenv
 from app.schemas.dialogue import QuestionSchema, AnswerSchema, KnowledgePayloadSchema
 from scripts.database.update_vectors import search_similar_contents
 
-# 載入 API 金鑰
-load_dotenv()
+# 載入 API 金鑰 (強制覆寫系統環境變數)
+load_dotenv(override=True)
 API_KEY = os.getenv("GEMINI_API_KEY")
 if API_KEY:
     genai.configure(api_key=API_KEY)
