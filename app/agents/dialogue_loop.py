@@ -12,6 +12,7 @@ from scripts.database.update_vectors import search_similar_contents
 # 載入 API 金鑰 (強制覆寫系統環境變數)
 load_dotenv(override=True)
 API_KEY = os.getenv("GEMINI_API_KEY")
+print(f"\033[94m[DEBUG] dialogue_loop 載入金鑰: {API_KEY[:8] if API_KEY else None}... (長度: {len(API_KEY) if API_KEY else 0})\033[0m")
 if API_KEY:
     genai.configure(api_key=API_KEY)
 
@@ -127,7 +128,7 @@ def call_inquirer(subject: str, history: List[Dict[str, Any]]) -> QuestionSchema
     try:
         if not API_KEY:
             raise ValueError("無 API 金鑰")
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-pro")
         response = model.generate_content(
             prompt,
             generation_config={
@@ -145,7 +146,7 @@ def call_inquirer(subject: str, history: List[Dict[str, Any]]) -> QuestionSchema
             mock_data = MOCK_INQUIRER_RESPONSES[-1].copy()
             mock_data["is_terminate"] = True  # 超過最大輪次時強制終止
             
-        print(f"\033[93m[降級] Gemini API 存取受限，啟用本地 Mock Inquirer 代理人 (Round {round_idx+1})\033[0m")
+        print(f"\033[93m[降級] Gemini API 存取受限 ({e})，啟用本地 Mock Inquirer 代理人 (Round {round_idx+1})\033[0m")
         return QuestionSchema.model_validate(mock_data)
 
 def call_responder(question: str, db_context: str) -> AnswerSchema:
@@ -157,8 +158,7 @@ def call_responder(question: str, db_context: str) -> AnswerSchema:
         if not API_KEY:
             raise ValueError("無 API 金鑰")
         model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
-            tools=[{"google_search": {}}]
+            model_name="gemini-pro"
         )
         response = model.generate_content(
             prompt,
@@ -185,7 +185,7 @@ def call_responder(question: str, db_context: str) -> AnswerSchema:
                     "internet_searched": False,
                     "source_citations": ["mock_ludingji_love.txt"]
                 }
-        print(f"\033[93m[降級] Gemini API 存取受限，啟用本地 Mock Responder 代理人 (聯網狀態: {mock_data['internet_searched']})\033[0m")
+        print(f"\033[93m[降級] Gemini API 存取受限 ({e})，啟用本地 Mock Responder 代理人 (聯網狀態: {mock_data['internet_searched']})\033[0m")
         return AnswerSchema.model_validate(mock_data)
 
 def call_summarizer(subject: str, history: List[Dict[str, Any]]) -> KnowledgePayloadSchema:
@@ -197,7 +197,7 @@ def call_summarizer(subject: str, history: List[Dict[str, Any]]) -> KnowledgePay
     try:
         if not API_KEY:
             raise ValueError("無 API 金鑰")
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-pro")
         response = model.generate_content(
             prompt,
             generation_config={
@@ -210,7 +210,7 @@ def call_summarizer(subject: str, history: List[Dict[str, Any]]) -> KnowledgePay
         # 啟用本地 Mock 歸納降級，動態替換主旨以確保 JIT Cache 匹配
         mock_data = MOCK_SUMMARIZER_RESPONSE.copy()
         mock_data["subject"] = subject
-        print(f"\033[93m[降級] Gemini API 存取受限，啟用本地 Mock Summarizer 代理人產製 L2 知識卡片\033[0m")
+        print(f"\033[93m[降級] Gemini API 存取受限 ({e})，啟用本地 Mock Summarizer 代理人產製 L2 知識卡片\033[0m")
         return KnowledgePayloadSchema.model_validate(mock_data)
 
 def save_to_knowledge_atlas(db_path: str, atlas_data: KnowledgePayloadSchema) -> int:
