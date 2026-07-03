@@ -3,7 +3,8 @@ import json
 import os
 import sqlite3
 from typing import List, Dict, Any
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from dotenv import load_dotenv
 
 from app.schemas.dialogue import QuestionSchema, AnswerSchema, KnowledgePayloadSchema
@@ -13,8 +14,14 @@ from scripts.database.update_vectors import search_similar_contents
 load_dotenv(override=True)
 API_KEY = os.getenv("GEMINI_API_KEY")
 print(f"\033[94m[DEBUG] dialogue_loop 載入金鑰: {API_KEY[:8] if API_KEY else None}... (長度: {len(API_KEY) if API_KEY else 0})\033[0m")
+
+# 初始化新版 google-genai Client
+client = None
 if API_KEY:
-    genai.configure(api_key=API_KEY)
+    try:
+        client = genai.Client(api_key=API_KEY)
+    except Exception as e:
+        print(f"\033[91m[警告] 初始化 google-genai Client 失敗: {e}\033[0m")
 
 # 定義 Prompts 目錄路徑
 PROMPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "prompts")
@@ -126,15 +133,15 @@ def call_inquirer(subject: str, history: List[Dict[str, Any]]) -> QuestionSchema
     prompt = template.format(subject=subject, history=history_str)
     
     try:
-        if not API_KEY:
-            raise ValueError("無 API 金鑰")
-        model = genai.GenerativeModel("gemini-pro")
-        response = model.generate_content(
-            prompt,
-            generation_config={
-                "response_mime_type": "application/json",
-                "response_schema": QuestionSchema
-            }
+        if not client:
+            raise ValueError("google-genai Client 未成功初始化，請檢查 API 金鑰")
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=QuestionSchema
+            )
         )
         return QuestionSchema.model_validate_json(response.text)
     except Exception as e:
@@ -155,17 +162,15 @@ def call_responder(question: str, db_context: str) -> AnswerSchema:
     prompt = template.format(question=question, current_db_context=db_context)
     
     try:
-        if not API_KEY:
-            raise ValueError("無 API 金鑰")
-        model = genai.GenerativeModel(
-            model_name="gemini-pro"
-        )
-        response = model.generate_content(
-            prompt,
-            generation_config={
-                "response_mime_type": "application/json",
-                "response_schema": AnswerSchema
-            }
+        if not client:
+            raise ValueError("google-genai Client 未成功初始化，請檢查 API 金鑰")
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=AnswerSchema
+            )
         )
         return AnswerSchema.model_validate_json(response.text)
     except Exception as e:
@@ -195,15 +200,15 @@ def call_summarizer(subject: str, history: List[Dict[str, Any]]) -> KnowledgePay
     prompt = template.format(subject=subject, history=history_str)
     
     try:
-        if not API_KEY:
-            raise ValueError("無 API 金鑰")
-        model = genai.GenerativeModel("gemini-pro")
-        response = model.generate_content(
-            prompt,
-            generation_config={
-                "response_mime_type": "application/json",
-                "response_schema": KnowledgePayloadSchema
-            }
+        if not client:
+            raise ValueError("google-genai Client 未成功初始化，請檢查 API 金鑰")
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=KnowledgePayloadSchema
+            )
         )
         return KnowledgePayloadSchema.model_validate_json(response.text)
     except Exception as e:

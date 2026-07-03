@@ -20,3 +20,7 @@ class KnowledgePayloadSchema(BaseModel):
     nodes: List[Dict[str, str]] = Field(..., description="提取出的關鍵實體節點")
     edges: List[Dict[str, Any]] = Field(..., description="實體間的關係邊及其屬性 (如親密值、恩情值)")
     synthesis_insight: str = Field(..., description="大歷史語義綜整分析與長文本摘要")
+
+    model_config = {
+        "extra": "forbid"
+    }
