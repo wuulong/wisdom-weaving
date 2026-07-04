@@ -1,8 +1,8 @@
 ---
 title: 系統工程導航總覽 (README)
-version: 0.1.0
+version: 0.1.1
 status: Approved
-last_updated: "2026-06-29"
+last_updated: "2026-07-04"
 ---
 
 # 系統工程導航總覽 (SE Navigation Overview)
@@ -33,3 +33,6 @@ last_updated: "2026-06-29"
 ### 系統工程聯絡資訊
 * 系統工程治理者：`wuulong`
 * AI Agent 協作狀態：已啟用 `system-engineer-navigator` 技能
+
+---
+> **當前專案迭代狀態**：`Development Stage (0.1.0.1)` (版本：`0.1.0.1`)

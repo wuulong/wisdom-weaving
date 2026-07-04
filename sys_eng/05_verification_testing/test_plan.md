@@ -2,7 +2,7 @@
 title: 測試計畫與測試案例說明 (test_plan)
 status: Draft
 last_updated: "2026-07-02"
-version: 1.1.0
+version: 0.1.1
 ---
 
 # 05. 測試計畫與測試案例說明 (Test Plan & Test Cases)

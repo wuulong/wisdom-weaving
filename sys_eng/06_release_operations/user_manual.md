@@ -2,7 +2,7 @@
 title: 使用者說明書與操作指南 (user_manual)
 status: Approved
 last_updated: "2026-07-04"
-version: 1.0.0
+version: 0.1.1
 ---
 
 # 06. 使用者說明書與操作指南 (User Manual & Operations Guide)

@@ -1,6 +1,6 @@
 # 📌 專案版本狀態 (version.md)
 
-## 當前版本：`v0.1.0`
+## 當前版本：`v0.1.1`
 *   **發布日期**：2026-07-04
 *   **狀態**：Active Development (開發中版本)
 *   **授權協定**：MIT (版權隔離隔離保護)
@@ -8,6 +8,19 @@
 ---
 
 ## 🚀 版本變更紀錄 (Changelog)
+
+### [v0.1.1] - 2026-07-04
+#### 🌟 核心功能與設計更新
+1. **多資料庫動態路由與隔離**：
+   - 支援針對不同來源的文本，動態路由建立與初始化對應的 SQLite 複合資料庫，以確保多文本知識體系互不污染。
+2. **CLI 全域支援指定目標資料庫參數**：
+   - 於 `wisdom-weaving` CLI 指令 (包括 `init`、`query`、`restore`、`strip`) 與底層 API 導入 `--db / -d` 參數，實現運行時目標資料庫檔案的動態路由與調度。
+3. **動態建立、去版權化剝離與地端還原對齊實作**：
+   - 於 `scripts/wisdom_weaving/` 完成 `db_manager.py`、`restorer.py`、`bootstrap.py` 與 `cli.py` 的實作。
+   - 實作基於 contents offset 對齊 slicing 的 100% 精準地端小說原著還原重建演算法。
+   - 順利通過宮廷權謀模擬文本動態載入、一鍵抹除 raw_text 與本地對齊 restore 還原的整合自檢測試。
+4. **系統工程語意對合與測試案例重構**：
+   - 重構 [test_plan.md](file:///Users/wuulong/github/bmad-pa/events/wisdom-core/wisdom-weaving/sys_eng/05_verification_testing/test_plan.md) 測試案例，使其完全對位通用規格（TCV-001 ~ TCV-006），執行 `se_manager.py audit` 一致性稽核 100% 合規通過。
 
 ### [v0.1.0] - 2026-07-04
 #### 🌟 核心功能實作

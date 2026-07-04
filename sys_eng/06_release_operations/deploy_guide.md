@@ -2,7 +2,7 @@
 title: 部署與運作維護指南 (deploy_guide)
 status: Approved
 last_updated: "2026-07-04"
-version: 1.0.0
+version: 0.1.1
 ---
 
 # 06. 部署與運作維護指南 (Deployment & Operations Guide)

@@ -1,8 +1,8 @@
 ---
 title: 系統架構設計說明書 (architecture)
 status: Draft
-last_updated: "2026-07-02"
-version: 0.1.0
+last_updated: "2026-07-04"
+version: 0.1.1
 ---
 
 # 03. 系統架構設計說明書 (System Architecture Design)
@@ -61,10 +61,11 @@ graph TD
 
 ## 2. 複合式資料底層設計 (DB + Vector DB + ER Graph DB)
 
-本系統融合三種不同的資料能力，全部統一在單一 SQLite 資料庫內實現：
+本系統融合三種不同的資料能力，全部統一在單一 SQLite 資料庫內實現，並支援多庫路由隔離：
 * **關聯式 SQL & JSON Metadata**：負責 Layer 0 與 Layer 1 提及引用之維護。藉由外鍵關係與 JSON 格式 metadata，將文件 (`documents`)、卷/章節 (`volumes`)、切片文本 (`contents`) 與引用提及 (`mentions`) 進行強關聯。
 * **Vector DB 語意檢索**：在 `contents` 原生整合向量欄位與索引（載入 `sqlite-vss` 或同等向量模組），當 Agent 或使用者發起自然語言查詢時，支援語意相似度檢索。
 * **ER 關係與語意圖譜**：在 SQLite 內建立 `entity_relations` 表，定義實體間多層、多維的關係屬性 JSON（如 `loyalty_value`、`betrayal_risk`），利用 SQL 遞迴查詢（CTE）或 Python 腳本來進行多層圖譜推理與查詢，從而免除對外部圖資料庫的依賴。
+* **多資料庫動態路由與隔離 (Multi-DB Routing)**：系統拒絕使用全域共享資料庫檔案。針對不同的文本來源，可於初始化或執行指令時動態指定不同的 SQLite 資料庫路徑（如 `--db ludingji.db` 或 `--db custom_text.db`），實現物理環境與知識體系的完整隔離。
 
 ---
 
@@ -293,11 +294,11 @@ sequenceDiagram
 ## 6. 入口 CLI 與腳本治理設計
 
 為落實 `script-governor` 規範，系統拒絕在大模型內以 Ad-hoc 方式執行複雜運算與資料庫操作：
-* **統一入口 CLI**：提供 `wisdom-weaving` CLI，包含：
-  - `wisdom-weaving init <source_text>`
-  - `wisdom-weaving query <user_prompt>`
-  - `wisdom-weaving restore --text <local_path>`（對齊與重建 L1 原始文本）
-* **獨立腳本治理**：資料庫建立、向量生成、網頁爬蟲與 Markdown 產製全部寫成獨立的 Python 腳本，放在 `scripts/` 的適當子目錄下。每個腳本必須遵循 API/CLI 雙向相容架構，且附有 `scripts/manuals/` 中的 Markdown 使用手冊說明書。
+* **統一入口 CLI**：提供 `wisdom-weaving` CLI，全域支援 `-d / --db` 參數以指定目標資料庫，包含：
+  - `wisdom-weaving init <source_text> [--db <db_file>]`（針對新文本動態建立並初始化對應 SQLite 檔案）
+  - `wisdom-weaving query <user_prompt> [--db <db_file>]`（在指定資料庫的範疇下運行提問、回答與 JIT 演進）
+  - `wisdom-weaving restore --text <local_path> [--db <db_file>]`（針對指定資料庫重建還原 L1 原始文本）
+* **獨立腳本治理**：資料庫建立、向量生成、網頁爬蟲與 Markdown 產製全部寫成獨立的 Python 腳本，放在 `scripts/` 的適當子目錄下。每個腳本必須遵循 API/CLI 雙向相容架構（接收動態資料庫路徑或連線物件作為參數），且附有 `scripts/manuals/` 中的 Markdown 使用手冊說明書。
 
 ---
 
