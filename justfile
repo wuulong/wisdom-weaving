@@ -1,23 +1,20 @@
 # =============================================================================
-# 🧠 智慧工程沙盒實驗系統 (Wisdom Weaving) 專屬指令集
+# 🧠 智慧工程沙盒實驗系統 (Wisdom Weaving) 專屬指令集 (v0.1.1)
 # =============================================================================
 
-# 一鍵初始化資料庫、導入模擬文本並生成語意向量 (一條龍)
-init:
-    @PYTHONPATH=. python3 app/main.py init
+# 初始化資料庫並載入文本 (用法: just init [db=資料庫路徑] [text=文字檔路徑])
+# 若未提供 text，預設將自動生成並載入無版權模擬權謀文本
+init db="" text="":
+    @PYTHONPATH=. python3 -m scripts.wisdom_weaving.cli {{ if db != "" { "--db " + db } else { "" } }} init {{ if text != "" { "--text " + text } else { "--simulation" } }}
 
-# JIT 語意檢索與按需建置專題 (用法: just query "查詢內容")
-query query="分析韋小寶如何利用身分隔離防穿幫":
-    @PYTHONPATH=. python3 app/main.py query "{{query}}"
+# 系統性 JIT 語意檢索與按需建置 (用法: just query "查詢語句" [db=資料庫路徑])
+query query db="":
+    @PYTHONPATH=. python3 -m scripts.wisdom_weaving.cli {{ if db != "" { "--db " + db } else { "" } }} query "{{query}}"
 
-# 一鍵剝離原始文本 (版權保護)
-strip:
-    @PYTHONPATH=. python3 app/main.py strip
+# 一鍵剝離原始文本以防範版權糾紛 (用法: just strip [db=資料庫路徑])
+strip db="":
+    @PYTHONPATH=. python3 -m scripts.wisdom_weaving.cli {{ if db != "" { "--db " + db } else { "" } }} strip
 
-# 一鍵還原本地原始文本 (地端重建)
-restore:
-    @PYTHONPATH=. python3 app/main.py restore
-
-# 一鍵匯出 Layer 2 知識卡片至 JSON 檔案 (供 Git 版本控制)
-export:
-    @PYTHONPATH=. python3 app/main.py export
+# 一鍵地端還原重建 contents 表中的小說原始文本 (用法: just restore "本地文本路徑" [db=資料庫路徑])
+restore text db="":
+    @PYTHONPATH=. python3 -m scripts.wisdom_weaving.cli {{ if db != "" { "--db " + db } else { "" } }} restore --text "{{text}}"
