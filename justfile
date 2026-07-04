@@ -17,3 +17,7 @@ strip:
 # 一鍵還原本地原始文本 (地端重建)
 restore:
     @PYTHONPATH=. python3 app/main.py restore
+
+# 一鍵匯出 Layer 2 知識卡片至 JSON 檔案 (供 Git 版本控制)
+export:
+    @PYTHONPATH=. python3 app/main.py export

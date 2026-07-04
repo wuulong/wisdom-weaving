@@ -1,0 +1,78 @@
+{
+  "source_origin": "Ludingji_Mock",
+  "category": "Love_Relationship",
+  "subject": "韋小寶多重身分資訊隔離防穿幫演算法",
+  "data_payload": {
+    "subject": "韋小寶多重身分資訊隔離防穿幫演算法",
+    "dimension_vectors": {
+      "geopolitical_correlation": 0.45,
+      "identity_isolation": 0.92,
+      "loyalty_and_gratitude": 0.88,
+      "interest_conflict": 0.85
+    },
+    "nodes": [
+      {
+        "id": "E-001",
+        "name": "韋小寶",
+        "role": "多重身份與情感持有者"
+      },
+      {
+        "id": "E-002",
+        "name": "雙兒",
+        "role": "高忠誠情感避風港"
+      },
+      {
+        "id": "E-003",
+        "name": "建寧公主",
+        "role": "朝廷權利威脅者"
+      },
+      {
+        "id": "E-004",
+        "name": "阿珂",
+        "role": "地緣政治情感衝突者"
+      },
+      {
+        "id": "E-005",
+        "name": "蘇荃",
+        "role": "利益綁定之智囊與博弈者"
+      }
+    ],
+    "edges": [
+      {
+        "source": "E-002",
+        "target": "E-001",
+        "relation": "無條件忠誠",
+        "properties": {
+          "loyalty": 98
+        }
+      },
+      {
+        "source": "E-003",
+        "target": "E-001",
+        "relation": "皇家佔有與逼問",
+        "properties": {
+          "threat": 90
+        }
+      },
+      {
+        "source": "E-004",
+        "target": "E-001",
+        "relation": "利益游移與拉扯",
+        "properties": {
+          "conflict": 85
+        }
+      },
+      {
+        "source": "E-005",
+        "target": "E-001",
+        "relation": "智謀輔佐與共生",
+        "properties": {
+          "alliance": 85
+        }
+      }
+    ],
+    "synthesis_insight": "在小小的麗春院後院中，韋小寶成功建立了一套情感與利益的多維平衡演算法。他在面對朝廷威脅（建寧）時使用高強度的身份隱密隔離（V_iso=0.92）；面對地緣與利益糾葛（阿珂）時，依靠雙兒的剛性支持（V_loy=0.88）與蘇荃的智謀協調，化解了高達 V_con=0.85 的派系衝突，實現了情感與政治的安全避險。"
+  },
+  "semantic_summary": "在小小的麗春院後院中，韋小寶成功建立了一套情感與利益的多維平衡演算法。他在面對朝廷威脅（建寧）時使用高強度的身份隱密隔離（V_iso=0.92）；面對地緣與利益糾葛（阿珂）時，依靠雙兒的剛性支持（V_loy=0.88）與蘇荃的智謀協調，化解了高達 V_con=0.85 的派系衝突，實現了情感與政治的安全避險。",
+  "version_tag": "v1.0.0"
+}
